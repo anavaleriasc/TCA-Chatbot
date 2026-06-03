@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from session_manager import create_session, get_history, add_message
 from llm_service import generate_chat_response
-from user_manager import create_user
+from user_manager import authenticate_user, create_user
 
 router = APIRouter()
 
@@ -24,27 +24,33 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 class UserResponse(BaseModel):
     id: str
     name: str
     email: str
 
-class RegisterResponse(BaseModel):
+class AuthResponse(BaseModel):
     message: str
     user: UserResponse
+
+def _validate_email(email: str):
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email.strip()):
+        raise HTTPException(status_code=400, detail="Informe um e-mail valido.")
 
 def _validate_registration(request: RegisterRequest):
     if len(request.name.strip()) < 2:
         raise HTTPException(status_code=400, detail="Informe um nome com pelo menos 2 caracteres.")
 
-    email = request.email.strip()
-    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-        raise HTTPException(status_code=400, detail="Informe um e-mail valido.")
+    _validate_email(request.email)
 
     if len(request.password) < 6:
         raise HTTPException(status_code=400, detail="A senha deve ter pelo menos 6 caracteres.")
 
-@router.post("/register", response_model=RegisterResponse, status_code=201)
+@router.post("/register", response_model=AuthResponse, status_code=201)
 async def register_endpoint(request: RegisterRequest):
     _validate_registration(request)
 
@@ -53,8 +59,24 @@ async def register_endpoint(request: RegisterRequest):
     except ValueError as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
 
-    return RegisterResponse(
+    return AuthResponse(
         message="Cadastro criado com sucesso.",
+        user=UserResponse(id=user["id"], name=user["name"], email=user["email"]),
+    )
+
+@router.post("/login", response_model=AuthResponse)
+async def login_endpoint(request: LoginRequest):
+    _validate_email(request.email)
+
+    if not request.password:
+        raise HTTPException(status_code=400, detail="Informe sua senha.")
+
+    user = authenticate_user(request.email, request.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="E-mail ou senha incorretos.")
+
+    return AuthResponse(
+        message="Login realizado com sucesso.",
         user=UserResponse(id=user["id"], name=user["name"], email=user["email"]),
     )
 
