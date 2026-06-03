@@ -24,14 +24,22 @@
             padding: 20px;
         }
 
-        #auth-container {
+        #auth-container,
+        #chat-container {
             width: 100%;
-            max-width: 420px;
             background: #1e293b;
             border: 1px solid #334155;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #auth-container {
+            max-width: 440px;
             border-radius: 16px;
             padding: 28px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        body.chat-ready #auth-container {
+            display: none;
         }
 
         #auth-container h1 {
@@ -45,10 +53,38 @@
             margin-bottom: 22px;
         }
 
-        #register-form {
-            display: flex;
+        .auth-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .auth-option {
+            padding: 11px 12px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .auth-option.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
             flex-direction: column;
             gap: 14px;
+        }
+
+        .auth-form.active {
+            display: flex;
         }
 
         .form-group {
@@ -77,7 +113,7 @@
             border-color: #3b82f6;
         }
 
-        #register-btn {
+        .auth-submit {
             margin-top: 6px;
             padding: 13px 16px;
             border: none;
@@ -90,39 +126,32 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        #register-btn:hover {
+        .auth-submit:hover {
             transform: translateY(-1px);
             box-shadow: 0 0 15px rgba(139, 92, 246, 0.45);
         }
 
-        #register-btn:disabled {
+        .auth-submit:disabled {
             cursor: not-allowed;
             opacity: 0.7;
             transform: none;
             box-shadow: none;
         }
 
-        #register-feedback {
+        #auth-feedback {
             min-height: 20px;
+            margin-top: 14px;
             color: #fca5a5;
             font-size: 0.9rem;
         }
 
-        body.chat-ready #auth-container {
-            display: none;
-        }
-
         #chat-container {
-            width: 100%;
             max-width: 600px;
             height: 85vh;
-            background: #1e293b;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: none;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #334155;
         }
 
         body.chat-ready #chat-container {
@@ -131,14 +160,16 @@
 
         #chat-header {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            padding: 20px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 1.2rem;
+            padding: 18px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
+        }
+
+        .bot-title {
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .status-dot {
@@ -151,11 +182,26 @@
             box-shadow: 0 0 8px #22c55e;
         }
 
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         #session-display {
-            color: #cbd5e1;
+            color: #e2e8f0;
             font-size: 0.75rem;
-            font-weight: 500;
             text-align: right;
+        }
+
+        #logout-btn {
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(15,23,42,0.2);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         #chat-history {
@@ -266,36 +312,59 @@
 </head>
 <body>
     <div id="auth-container">
-        <h1>Criar cadastro</h1>
-        <p>Informe seus dados para iniciar uma conversa com o chatbot.</p>
+        <h1>Acesse o chatbot</h1>
+        <p>Entre com uma conta existente ou crie um cadastro para iniciar a conversa.</p>
 
-        <form id="register-form">
+        <div class="auth-options">
+            <button class="auth-option active" id="login-option" type="button" onclick="setAuthMode('login')">Já possuo conta</button>
+            <button class="auth-option" id="register-option" type="button" onclick="setAuthMode('register')">Cadastro</button>
+        </div>
+
+        <form class="auth-form active" id="login-form">
             <div class="form-group">
-                <label for="name-input">Nome</label>
-                <input type="text" id="name-input" minlength="2" autocomplete="name" required>
+                <label for="login-email-input">E-mail</label>
+                <input type="email" id="login-email-input" autocomplete="email" required>
             </div>
 
             <div class="form-group">
-                <label for="email-input">E-mail</label>
-                <input type="email" id="email-input" autocomplete="email" required>
+                <label for="login-password-input">Senha</label>
+                <input type="password" id="login-password-input" autocomplete="current-password" required>
             </div>
 
-            <div class="form-group">
-                <label for="password-input">Senha</label>
-                <input type="password" id="password-input" minlength="6" autocomplete="new-password" required>
-            </div>
-
-            <button type="submit" id="register-btn">Cadastrar</button>
-            <div id="register-feedback" role="status"></div>
+            <button class="auth-submit" id="login-btn" type="submit">Entrar</button>
         </form>
+
+        <form class="auth-form" id="register-form">
+            <div class="form-group">
+                <label for="register-name-input">Nome</label>
+                <input type="text" id="register-name-input" minlength="2" autocomplete="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="register-email-input">E-mail</label>
+                <input type="email" id="register-email-input" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="register-password-input">Senha</label>
+                <input type="password" id="register-password-input" minlength="6" autocomplete="new-password" required>
+            </div>
+
+            <button class="auth-submit" id="register-btn" type="submit">Cadastrar</button>
+        </form>
+
+        <div id="auth-feedback" role="status"></div>
     </div>
 
     <div id="chat-container">
         <div id="chat-header">
-            <div>
-                <span class="status-dot"></span> Gemini AI Bot
+            <div class="bot-title">
+                <span class="status-dot"></span>Gemini AI Bot
             </div>
-            <div id="session-display">Sessao: Iniciando...</div>
+            <div class="user-area">
+                <div id="session-display">Sessao: Iniciando...</div>
+                <button id="logout-btn" type="button" onclick="logout()">Sair</button>
+            </div>
         </div>
 
         <div id="chat-history">
@@ -316,20 +385,29 @@
         const chatHistory = document.getElementById('chat-history');
         const messageInput = document.getElementById('message-input');
         const sessionDisplay = document.getElementById('session-display');
+        const authFeedback = document.getElementById('auth-feedback');
+        const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
+        const loginButton = document.getElementById('login-btn');
         const registerButton = document.getElementById('register-btn');
-        const registerFeedback = document.getElementById('register-feedback');
+        const loginOption = document.getElementById('login-option');
+        const registerOption = document.getElementById('register-option');
 
         let sessionId = sessionStorage.getItem("chatbot_session_id");
         let currentUser = JSON.parse(sessionStorage.getItem("chatbot_user") || "null");
 
         if (sessionId) {
-            sessionDisplay.innerText = "Sessao: " + sessionId.substring(0, 8) + "...";
+            updateSessionDisplay();
         }
 
         if (currentUser) {
             showChat();
         }
+
+        loginForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            await loginUser();
+        });
 
         registerForm.addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -343,42 +421,61 @@
             }
         });
 
-        async function registerUser() {
-            const name = document.getElementById('name-input').value.trim();
-            const email = document.getElementById('email-input').value.trim();
-            const password = document.getElementById('password-input').value;
+        function setAuthMode(mode) {
+            const isLogin = mode === "login";
+            loginOption.classList.toggle("active", isLogin);
+            registerOption.classList.toggle("active", !isLogin);
+            loginForm.classList.toggle("active", isLogin);
+            registerForm.classList.toggle("active", !isLogin);
+            authFeedback.innerText = "";
+        }
 
-            registerFeedback.innerText = "";
-            registerButton.disabled = true;
-            registerButton.innerText = "Cadastrando...";
+        async function loginUser() {
+            const email = document.getElementById('login-email-input').value.trim();
+            const password = document.getElementById('login-password-input').value;
+            await submitAuth('/login', { email, password }, loginButton, "Entrando...");
+        }
+
+        async function registerUser() {
+            const name = document.getElementById('register-name-input').value.trim();
+            const email = document.getElementById('register-email-input').value.trim();
+            const password = document.getElementById('register-password-input').value;
+            await submitAuth('/register', { name, email, password }, registerButton, "Cadastrando...");
+        }
+
+        async function submitAuth(url, payload, button, loadingText) {
+            const originalText = button.innerText;
+            authFeedback.innerText = "";
+            button.disabled = true;
+            button.innerText = loadingText;
 
             try {
-                const response = await fetch('/register', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.detail || "Nao foi possivel criar o cadastro.");
+                    throw new Error(data.detail || "Nao foi possivel autenticar.");
                 }
 
                 currentUser = data.user;
                 sessionStorage.setItem("chatbot_user", JSON.stringify(currentUser));
                 showChat();
             } catch (error) {
-                registerFeedback.innerText = error.message;
+                authFeedback.innerText = error.message;
             } finally {
-                registerButton.disabled = false;
-                registerButton.innerText = "Cadastrar";
+                button.disabled = false;
+                button.innerText = originalText;
             }
         }
 
         async function sendMessage() {
             if (!currentUser) {
-                registerFeedback.innerText = "Crie seu cadastro antes de iniciar o chat.";
+                authFeedback.innerText = "Faca login antes de iniciar o chat.";
                 return;
             }
 
@@ -406,7 +503,7 @@
                 if (data.session_id) {
                     sessionId = data.session_id;
                     sessionStorage.setItem("chatbot_session_id", sessionId);
-                    sessionDisplay.innerText = "Sessao: " + sessionId.substring(0, 8) + "...";
+                    updateSessionDisplay();
                 }
 
                 document.getElementById(loadingId).remove();
@@ -429,11 +526,29 @@
 
         function showChat() {
             document.body.classList.add("chat-ready");
+            updateSessionDisplay();
+
             if (!chatHistory.dataset.userShown) {
-                appendMessage("Cadastro ativo: " + currentUser.name + ".", 'bot-message');
+                appendMessage("Usuario autenticado: " + currentUser.name + ".", 'bot-message');
                 chatHistory.dataset.userShown = "true";
             }
+
             messageInput.focus();
+        }
+
+        function updateSessionDisplay() {
+            const userName = currentUser ? currentUser.name : "Usuario";
+            const sessionText = sessionId ? sessionId.substring(0, 8) + "..." : "nova";
+            sessionDisplay.innerText = userName + " | Sessao: " + sessionText;
+        }
+
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem("chatbot_user");
+            document.body.classList.remove("chat-ready");
+            chatHistory.dataset.userShown = "";
+            authFeedback.innerText = "";
+            setAuthMode("login");
         }
     </script>
 </body>

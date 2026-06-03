@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import os
 import uuid
 from datetime import datetime, timezone
@@ -38,7 +39,19 @@ def create_user(name: str, email: str, password: str) -> Dict[str, str]:
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     _users_by_email[normalized_email] = user
-    return user
+    return get_public_user(normalized_email)
+
+
+def authenticate_user(email: str, password: str) -> Optional[Dict[str, str]]:
+    user = _users_by_email.get(_normalize_email(email))
+    if not user:
+        return None
+
+    _, password_hash = _hash_password(password, user["password_salt"])
+    if not hmac.compare_digest(password_hash, user["password_hash"]):
+        return None
+
+    return get_public_user(email)
 
 
 def get_public_user(email: str) -> Optional[Dict[str, str]]:
