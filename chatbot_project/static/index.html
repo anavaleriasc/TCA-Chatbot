@@ -394,13 +394,14 @@
         const registerOption = document.getElementById('register-option');
 
         let sessionId = sessionStorage.getItem("chatbot_session_id");
+        let authToken = sessionStorage.getItem("chatbot_access_token");
         let currentUser = JSON.parse(sessionStorage.getItem("chatbot_user") || "null");
 
         if (sessionId) {
             updateSessionDisplay();
         }
 
-        if (currentUser) {
+        if (currentUser && authToken) {
             showChat();
         }
 
@@ -462,7 +463,9 @@
                     throw new Error(data.detail || "Nao foi possivel autenticar.");
                 }
 
+                authToken = data.access_token;
                 currentUser = data.user;
+                sessionStorage.setItem("chatbot_access_token", authToken);
                 sessionStorage.setItem("chatbot_user", JSON.stringify(currentUser));
                 showChat();
             } catch (error) {
@@ -474,8 +477,9 @@
         }
 
         async function sendMessage() {
-            if (!currentUser) {
+            if (!currentUser || !authToken) {
                 authFeedback.innerText = "Faca login antes de iniciar o chat.";
+                logout();
                 return;
             }
 
@@ -491,7 +495,10 @@
             try {
                 const response = await fetch('/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authToken
+                    },
                     body: JSON.stringify({
                         session_id: sessionId,
                         message: text
@@ -499,6 +506,10 @@
                 });
 
                 const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Falha ao enviar mensagem.");
+                }
 
                 if (data.session_id) {
                     sessionId = data.session_id;
@@ -511,7 +522,10 @@
             } catch (error) {
                 console.error("Erro no Fetch:", error);
                 document.getElementById(loadingId).remove();
-                appendMessage("Erro: Falha na comunicacao com o servidor.", 'bot-message');
+                appendMessage("Erro: " + error.message, 'bot-message');
+                if (error.message.includes("Token")) {
+                    logout();
+                }
             }
         }
 
@@ -543,8 +557,12 @@
         }
 
         function logout() {
+            authToken = null;
             currentUser = null;
+            sessionId = null;
+            sessionStorage.removeItem("chatbot_access_token");
             sessionStorage.removeItem("chatbot_user");
+            sessionStorage.removeItem("chatbot_session_id");
             document.body.classList.remove("chat-ready");
             chatHistory.dataset.userShown = "";
             authFeedback.innerText = "";
