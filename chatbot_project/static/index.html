@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Multiusuario | Inteligencia Artificial</title>
+    <title>Chatbot Multiusuário | Inteligência Artificial</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-
+        
         * {
             margin: 0;
             padding: 0;
@@ -20,158 +20,34 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            height: 100vh;
         }
 
-        #auth-container,
         #chat-container {
             width: 100%;
-            background: #1e293b;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        #auth-container {
-            max-width: 440px;
-            border-radius: 16px;
-            padding: 28px;
-        }
-
-        body.chat-ready #auth-container {
-            display: none;
-        }
-
-        #auth-container h1 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
-
-        #auth-container p {
-            color: #cbd5e1;
-            line-height: 1.5;
-            margin-bottom: 22px;
-        }
-
-        .auth-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .auth-option {
-            padding: 11px 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #cbd5e1;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .auth-option.active {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
-        }
-
-        .auth-form {
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .auth-form.active {
-            display: flex;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            color: #cbd5e1;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            padding: 13px 14px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .form-group input:focus {
-            border-color: #3b82f6;
-        }
-
-        .auth-submit {
-            margin-top: 6px;
-            padding: 13px 16px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .auth-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.45);
-        }
-
-        .auth-submit:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-            transform: none;
-            box-shadow: none;
-        }
-
-        #auth-feedback {
-            min-height: 20px;
-            margin-top: 14px;
-            color: #fca5a5;
-            font-size: 0.9rem;
-        }
-
-        #chat-container {
             max-width: 600px;
             height: 85vh;
+            background: #1e293b;
             border-radius: 20px;
-            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
             flex-direction: column;
             overflow: hidden;
-        }
-
-        body.chat-ready #chat-container {
-            display: flex;
+            border: 1px solid #334155;
         }
 
         #chat-header {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            padding: 18px 20px;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
         }
-
-        .bot-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
+        
         .status-dot {
             height: 10px;
             width: 10px;
@@ -180,28 +56,6 @@
             display: inline-block;
             margin-right: 8px;
             box-shadow: 0 0 8px #22c55e;
-        }
-
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #session-display {
-            color: #e2e8f0;
-            font-size: 0.75rem;
-            text-align: right;
-        }
-
-        #logout-btn {
-            border: 1px solid rgba(255,255,255,0.35);
-            background: rgba(15,23,42,0.2);
-            color: white;
-            border-radius: 8px;
-            padding: 8px 10px;
-            cursor: pointer;
-            font-weight: 600;
         }
 
         #chat-history {
@@ -218,7 +72,6 @@
         #chat-history::-webkit-scrollbar {
             width: 6px;
         }
-
         #chat-history::-webkit-scrollbar-thumb {
             background-color: #475569;
             border-radius: 10px;
@@ -247,7 +100,7 @@
             align-self: flex-start;
             border-bottom-left-radius: 4px;
         }
-
+        
         .bot-message.loading {
             background: transparent;
             color: #94a3b8;
@@ -290,7 +143,6 @@
             justify-content: center;
             align-items: center;
             transition: transform 0.2s, box-shadow 0.2s;
-            flex: 0 0 50px;
         }
 
         #send-btn:hover {
@@ -311,70 +163,23 @@
     </style>
 </head>
 <body>
-    <div id="auth-container">
-        <h1>Acesse o chatbot</h1>
-        <p>Entre com uma conta existente ou crie um cadastro para iniciar a conversa.</p>
-
-        <div class="auth-options">
-            <button class="auth-option active" id="login-option" type="button" onclick="setAuthMode('login')">Já possuo conta</button>
-            <button class="auth-option" id="register-option" type="button" onclick="setAuthMode('register')">Cadastro</button>
-        </div>
-
-        <form class="auth-form active" id="login-form">
-            <div class="form-group">
-                <label for="login-email-input">E-mail</label>
-                <input type="email" id="login-email-input" autocomplete="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="login-password-input">Senha</label>
-                <input type="password" id="login-password-input" autocomplete="current-password" required>
-            </div>
-
-            <button class="auth-submit" id="login-btn" type="submit">Entrar</button>
-        </form>
-
-        <form class="auth-form" id="register-form">
-            <div class="form-group">
-                <label for="register-name-input">Nome</label>
-                <input type="text" id="register-name-input" minlength="2" autocomplete="name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="register-email-input">E-mail</label>
-                <input type="email" id="register-email-input" autocomplete="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="register-password-input">Senha</label>
-                <input type="password" id="register-password-input" minlength="6" autocomplete="new-password" required>
-            </div>
-
-            <button class="auth-submit" id="register-btn" type="submit">Cadastrar</button>
-        </form>
-
-        <div id="auth-feedback" role="status"></div>
-    </div>
 
     <div id="chat-container">
         <div id="chat-header">
-            <div class="bot-title">
-                <span class="status-dot"></span>Gemini AI Bot
+            <div>
+                <span class="status-dot"></span> Gemini AI Bot
             </div>
-            <div class="user-area">
-                <div id="session-display">Sessao: Iniciando...</div>
-                <button id="logout-btn" type="button" onclick="logout()">Sair</button>
-            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1;" id="session-display">Sessão: Iniciando...</div>
         </div>
-
+        
         <div id="chat-history">
-            <div class="message bot-message">Ola! Eu sou o assistente de inteligencia artificial construido com Gemini. Como posso ajudar voce hoje?</div>
+            <div class="message bot-message">Olá! Eu sou o assistente de inteligência artificial construído com Gemini. Como posso ajudar você hoje?</div>
         </div>
-
+        
         <div id="input-area">
             <input type="text" id="message-input" placeholder="Digite sua mensagem..." autocomplete="off">
-            <button id="send-btn" onclick="sendMessage()" aria-label="Enviar mensagem">
-                <svg class="send-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <button id="send-btn" onclick="sendMessage()">
+                <svg class="send-icon" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
                 </svg>
             </button>
@@ -385,35 +190,15 @@
         const chatHistory = document.getElementById('chat-history');
         const messageInput = document.getElementById('message-input');
         const sessionDisplay = document.getElementById('session-display');
-        const authFeedback = document.getElementById('auth-feedback');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const loginButton = document.getElementById('login-btn');
-        const registerButton = document.getElementById('register-btn');
-        const loginOption = document.getElementById('login-option');
-        const registerOption = document.getElementById('register-option');
-
+        
+        // RECUPERAÇÃO DO SESSION ID: Garantindo persistência durante a mesma aba do navegador
         let sessionId = sessionStorage.getItem("chatbot_session_id");
-        let currentUser = JSON.parse(sessionStorage.getItem("chatbot_user") || "null");
 
-        if (sessionId) {
-            updateSessionDisplay();
+        if(sessionId) {
+            sessionDisplay.innerText = "Sessão: " + sessionId.substring(0,8) + "...";
         }
 
-        if (currentUser) {
-            showChat();
-        }
-
-        loginForm.addEventListener("submit", async function(event) {
-            event.preventDefault();
-            await loginUser();
-        });
-
-        registerForm.addEventListener("submit", async function(event) {
-            event.preventDefault();
-            await registerUser();
-        });
-
+        // Permite o envio também pressionando a tecla Enter no input
         messageInput.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -421,97 +206,47 @@
             }
         });
 
-        function setAuthMode(mode) {
-            const isLogin = mode === "login";
-            loginOption.classList.toggle("active", isLogin);
-            registerOption.classList.toggle("active", !isLogin);
-            loginForm.classList.toggle("active", isLogin);
-            registerForm.classList.toggle("active", !isLogin);
-            authFeedback.innerText = "";
-        }
-
-        async function loginUser() {
-            const email = document.getElementById('login-email-input').value.trim();
-            const password = document.getElementById('login-password-input').value;
-            await submitAuth('/login', { email, password }, loginButton, "Entrando...");
-        }
-
-        async function registerUser() {
-            const name = document.getElementById('register-name-input').value.trim();
-            const email = document.getElementById('register-email-input').value.trim();
-            const password = document.getElementById('register-password-input').value;
-            await submitAuth('/register', { name, email, password }, registerButton, "Cadastrando...");
-        }
-
-        async function submitAuth(url, payload, button, loadingText) {
-            const originalText = button.innerText;
-            authFeedback.innerText = "";
-            button.disabled = true;
-            button.innerText = loadingText;
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.detail || "Nao foi possivel autenticar.");
-                }
-
-                currentUser = data.user;
-                sessionStorage.setItem("chatbot_user", JSON.stringify(currentUser));
-                showChat();
-            } catch (error) {
-                authFeedback.innerText = error.message;
-            } finally {
-                button.disabled = false;
-                button.innerText = originalText;
-            }
-        }
-
         async function sendMessage() {
-            if (!currentUser) {
-                authFeedback.innerText = "Faca login antes de iniciar o chat.";
-                return;
-            }
-
             const text = messageInput.value.trim();
             if (!text) return;
 
+            // Insere a mensagem visualmente e limpa o input
             appendMessage(text, 'user-message');
             messageInput.value = '';
 
+            // Adiciona um feedback de carregamento (Loading)
             const loadingId = "loading-" + Date.now();
             appendMessage("Digitando...", 'bot-message loading', loadingId);
 
             try {
+                // COMUNICAÇÃO FETCH ASSÍNCRONA com a API backend FastAPI
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        message: text
+                    body: JSON.stringify({ 
+                        session_id: sessionId, // Opcional na primeira vez, o servidor gera se faltar
+                        message: text 
                     })
                 });
 
                 const data = await response.json();
-
+                
+                // Se um NOVO session_id for retornado pelo backend (ou seja, se a sessão acabou de ser criada)
+                // O front salva isso no Session Storage (Memória da Aba do Navegador)
                 if (data.session_id) {
                     sessionId = data.session_id;
                     sessionStorage.setItem("chatbot_session_id", sessionId);
-                    updateSessionDisplay();
+                    sessionDisplay.innerText = "Sessão: " + sessionId.substring(0,8) + "...";
                 }
 
+                // Remove o balãozinho de "Digitando..." e coloca a resposta final
                 document.getElementById(loadingId).remove();
                 appendMessage(data.response, 'bot-message');
+                
             } catch (error) {
                 console.error("Erro no Fetch:", error);
                 document.getElementById(loadingId).remove();
-                appendMessage("Erro: Falha na comunicacao com o servidor.", 'bot-message');
+                appendMessage("Erro: Falha na comunicação com o servidor.", 'bot-message');
             }
         }
 
@@ -521,34 +256,8 @@
             if (id) div.id = id;
             div.innerText = text;
             chatHistory.appendChild(div);
+            // Rolagem automática da barra para baixo a cada mensagem nova
             chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
-
-        function showChat() {
-            document.body.classList.add("chat-ready");
-            updateSessionDisplay();
-
-            if (!chatHistory.dataset.userShown) {
-                appendMessage("Usuario autenticado: " + currentUser.name + ".", 'bot-message');
-                chatHistory.dataset.userShown = "true";
-            }
-
-            messageInput.focus();
-        }
-
-        function updateSessionDisplay() {
-            const userName = currentUser ? currentUser.name : "Usuario";
-            const sessionText = sessionId ? sessionId.substring(0, 8) + "..." : "nova";
-            sessionDisplay.innerText = userName + " | Sessao: " + sessionText;
-        }
-
-        function logout() {
-            currentUser = null;
-            sessionStorage.removeItem("chatbot_user");
-            document.body.classList.remove("chat-ready");
-            chatHistory.dataset.userShown = "";
-            authFeedback.innerText = "";
-            setAuthMode("login");
         }
     </script>
 </body>
