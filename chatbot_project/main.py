@@ -3,9 +3,6 @@ from fastapi.staticfiles import StaticFiles
 from routes import router
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-
 # Inicializa o FastAPI
 app = FastAPI(title="Chatbot Multiusuário com Gemini")
 
@@ -13,11 +10,11 @@ app = FastAPI(title="Chatbot Multiusuário com Gemini")
 app.include_router(router)
 
 # Garantindo que a pasta static exista caso seja rodado num local vazio
-os.makedirs(STATIC_DIR, exist_ok=True)
+os.makedirs("static", exist_ok=True)
 
 # Monta a pasta 'static' para servir o Frontend web (HTML, CSS, JS) na raiz ("/")
 # A opção html=True faz com que ao acessar a raiz ele busque automaticamente o index.html
-app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
