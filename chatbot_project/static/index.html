@@ -395,7 +395,7 @@
 
         let sessionId = sessionStorage.getItem("chatbot_session_id");
         let authToken = sessionStorage.getItem("chatbot_access_token");
-        let currentUser = JSON.parse(sessionStorage.getItem("chatbot_user") || "null");
+        let currentUser = loadStoredUser();
 
         if (sessionId) {
             updateSessionDisplay();
@@ -457,7 +457,7 @@
                     body: JSON.stringify(payload)
                 });
 
-                const data = await response.json();
+                const data = await parseJsonResponse(response);
 
                 if (!response.ok) {
                     throw new Error(data.detail || "Nao foi possivel autenticar.");
@@ -505,7 +505,7 @@
                     })
                 });
 
-                const data = await response.json();
+                const data = await parseJsonResponse(response);
 
                 if (!response.ok) {
                     throw new Error(data.detail || "Falha ao enviar mensagem.");
@@ -536,6 +536,35 @@
             div.innerText = text;
             chatHistory.appendChild(div);
             chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function loadStoredUser() {
+            const storedUser = sessionStorage.getItem("chatbot_user");
+            if (!storedUser) return null;
+
+            try {
+                return JSON.parse(storedUser);
+            } catch (error) {
+                sessionStorage.removeItem("chatbot_user");
+                sessionStorage.removeItem("chatbot_access_token");
+                sessionStorage.removeItem("chatbot_session_id");
+                return null;
+            }
+        }
+
+        async function parseJsonResponse(response) {
+            const contentType = response.headers.get("content-type") || "";
+            const text = await response.text();
+
+            if (!contentType.includes("application/json")) {
+                throw new Error("O servidor nao retornou JSON. Verifique se voce abriu a pagina pelo FastAPI em http://127.0.0.1:8000 e se o backend esta sem erro.");
+            }
+
+            try {
+                return text ? JSON.parse(text) : {};
+            } catch (error) {
+                throw new Error("Resposta JSON invalida recebida do servidor.");
+            }
         }
 
         function showChat() {
