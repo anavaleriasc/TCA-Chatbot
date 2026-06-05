@@ -1,5 +1,5 @@
-from app.models.chat_session_model import ChatSession
-from app.models.chat_message_model import ChatMessage
+from models.chat_session_model import ChatSession
+from models.chat_message_model import ChatMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Iterable, Optional
 from sqlalchemy import select

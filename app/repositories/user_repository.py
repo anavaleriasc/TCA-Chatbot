@@ -2,22 +2,30 @@ from models.user_model import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Iterable, Optional
 from sqlalchemy import select
+import hashlib
+import hmac
+import os
+import uuid
+from datetime import datetime, timezone
+from typing import Dict, Optional
 
 
-def hash_password(password: str, salt: Optional[str] = None) -> str:
-    salt = salt or os.urandom(16).hex()
-    password_hash = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        bytes.fromhex(salt),
-        100_000,
-    ).hex()
-    return password_hash
 
 
 class UserRepository:
+    def get_hash_password(self,password: str, salt: Optional[str] = None) -> str:
+        salt = salt or os.urandom(16).hex()
+        password_hash = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            bytes.fromhex(salt),
+            100_000,
+        ).hex()
+        return password_hash
+
+
     async def create(self,session:AsyncSession, *, email:str, password:str )->User:
-        hash_password = hash_password(password)
+        hash_password = self.get_hash_password(password)
         user = User(email=email, hashed_password=hash_password)
         session.add(user)
         await session.commit()
