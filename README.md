@@ -3,62 +3,180 @@
 Repositório destinado ao protótipo do chatbot desenvolvido para a disciplina **Tópicos em Computação Aplicada**.
 
 ## 📌 Sobre o Projeto
-O projeto consiste em uma aplicação web multiusuário onde os clientes podem interagir com um modelo LLM (Large Language Model) - neste caso, o mais recente **Google Gemini 2.5 Flash**. A aplicação gerencia sessões independentes, garantindo que o histórico de conversa de um usuário não interfira no de outro.
+
+O projeto consiste em uma aplicação web multiusuário onde os usuários podem interagir com um modelo LLM (Large Language Model), utilizando o **Google Gemini 2.5 Flash** como motor de inteligência artificial.
+
+A aplicação foi projetada para gerenciar sessões independentes de conversa, garantindo o isolamento do histórico entre diferentes usuários. O sistema é composto por um backend responsável pela comunicação com a API do Gemini e um frontend moderno desenvolvido em Next.js.
+
+---
 
 ## 🚀 Tecnologias Utilizadas
-* **Backend:** Python 3, FastAPI, Uvicorn, Pydantic.
-* **Inteligência Artificial:** Novo SDK `google-genai` (Modelo Gemini 2.5 Flash).
-* **Frontend:** HTML5, CSS3, Vanilla JavaScript (Interface assíncrona com `fetch` e gerenciamento de estado via `sessionStorage`).
-* **Infraestrutura:** Planejado para AWS EC2.
+
+### Backend
+
+* Python 3
+* FastAPI
+* Uvicorn
+* Pydantic
+* Python Dotenv
+
+### Inteligência Artificial
+
+* Google Gemini 2.5 Flash
+* SDK oficial `google-genai`
+
+### Frontend
+
+* Next.js 15
+* React 19
+* TypeScript
+* CSS Modules
+* Fetch API para comunicação com o backend
+
+### Infraestrutura
+
+* AWS EC2 (implantação planejada)
+
+---
 
 ## 🏗️ Arquitetura do Sistema
-O código foi desenhado aplicando *Separation of Concerns* (Separação de Responsabilidades), distribuído nos seguintes módulos:
-* `main.py`: Inicialização e montagem da aplicação FastAPI e dos recursos estáticos (frontend).
-* `routes.py`: Definição de endpoints REST, como o `POST /chat`.
-* `session_manager.py`: Lógica para criação e gerenciamento de UUIDs únicos por sessão e isolamento em memória do histórico de cada usuário.
-* `llm_service.py`: Lógica isolada de comunicação e integração com a API do Google Generative AI.
-* `static/index.html`: Toda a parte visual (UI moderna do chatbot).
-* `.env`: Arquivo de variáveis de ambiente (contendo a chave secreta da API).
 
-## ⚙️ Como rodar o projeto localmente
+### Backend
 
-Siga o passo a passo abaixo para rodar o projeto na sua máquina:
+A aplicação backend segue o princípio de **Separation of Concerns (SoC)**, distribuindo responsabilidades entre módulos específicos:
 
-**1. Clone o repositório (ou baixe os arquivos)**
+* `main.py` — Inicialização da aplicação FastAPI e configuração dos recursos.
+* `routes.py` — Definição dos endpoints REST da API.
+* `session_manager.py` — Gerenciamento de sessões e histórico de conversas por usuário.
+* `llm_service.py` — Integração com a API do Google Gemini.
+* `.env` — Armazenamento seguro das variáveis de ambiente.
+
+### Frontend
+
+O frontend foi desenvolvido utilizando a arquitetura baseada em componentes do Next.js:
+
+* `src/app/` — Rotas e páginas da aplicação.
+* `src/components/` — Componentes reutilizáveis da interface.
+* `src/mocks/` — Dados simulados utilizados durante o desenvolvimento.
+* `src/styles/` — Estilos globais e específicos dos componentes.
+* `public/` — Arquivos estáticos da aplicação.
+
+Principais componentes:
+
+* **Sidebar** — Exibição das conversas do usuário.
+* **ChatWindow** — Área principal de exibição das mensagens.
+* **MessageBubble** — Renderização das mensagens do usuário e do assistente.
+* **MessageInput** — Campo de entrada e envio de mensagens.
+
+---
+
+## ⚙️ Como Executar o Projeto
+
+### 1. Clonar o Repositório
+
 ```bash
-git clone <URL_DE_STE_REPOSITORIO>
-cd chatbot_project
+git clone <URL_DO_REPOSITORIO>
+cd chatbot-project
 ```
 
-**2. Crie um Ambiente Virtual (Opcional, mas recomendado)**
+---
+
+## Backend
+
+### 2. Criar Ambiente Virtual
+
 ```bash
 python -m venv venv
+```
 
-# Para ativar no Windows:
+Windows:
+
+```bash
 venv\Scripts\activate
+```
 
-# Para ativar no Linux/Mac:
+Linux/Mac:
+
+```bash
 source venv/bin/activate
 ```
 
-**3. Instale as dependências**
+### 3. Instalar Dependências
+
 ```bash
 pip install -r requirements.txt
 ```
 
-**4. Configure sua chave da API do Google**
-Crie um arquivo chamado `.env` na raiz do projeto (se ainda não existir) e insira sua chave do [Google AI Studio](https://aistudio.google.com/):
+### 4. Configurar Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do backend:
+
 ```env
-GOOGLE_API_KEY=sua_chave_secreta_aqui
+GOOGLE_API_KEY=sua_chave_aqui
 ```
 
-**5. Execute o servidor**
+### 5. Executar o Backend
+
 ```bash
 uvicorn main:app --reload
 ```
 
-**6. Acesse no Navegador**
-Abra o seu navegador e acesse: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+O servidor ficará disponível em:
 
-## ☁️ Implantação na AWS (Entrega Final)
-Para instruções sobre como publicar essa aplicação em um servidor público EC2 na AWS para a apresentação, consulte o arquivo interno `instrucoes_ec2.md`.
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Frontend
+
+### 6. Instalar Dependências
+
+```bash
+npm install
+```
+
+### 7. Executar o Frontend
+
+```bash
+npm run dev
+```
+
+O frontend ficará disponível em:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## 🔄 Fluxo de Funcionamento
+
+1. O usuário envia uma mensagem pela interface web.
+2. O frontend realiza uma requisição HTTP para o backend.
+3. O backend identifica a sessão do usuário.
+4. O histórico da conversa é recuperado.
+5. A mensagem é enviada ao Google Gemini.
+6. A resposta gerada é retornada ao backend.
+7. O backend atualiza o histórico da sessão.
+8. A resposta é exibida ao usuário na interface.
+
+---
+
+## ☁️ Implantação na AWS
+
+A entrega final prevê a implantação da aplicação em uma instância EC2 da AWS.
+
+A infraestrutura deverá conter:
+
+* Frontend Next.js em produção;
+* Backend FastAPI executando via Uvicorn/Gunicorn;
+* Configuração de variáveis de ambiente seguras;
+* Acesso público por endereço IP ou domínio.
+
+---
+
+## 👥 Equipe
+
+Projeto desenvolvido para a disciplina **Tópicos em Computação Aplicada**.
