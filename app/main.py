@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from routes import router
 import os
+from api.router import api_router
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -10,7 +10,8 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 app = FastAPI(title="Chatbot Multiusuário com Gemini")
 
 # Registra os roteadores definidos no arquivo routes.py
-app.include_router(router)
+#app.include_router(router)
+app.include_router(api_router)
 
 # Garantindo que a pasta static exista caso seja rodado num local vazio
 os.makedirs(STATIC_DIR, exist_ok=True)
