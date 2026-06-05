@@ -5,14 +5,14 @@ import uuid
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-
+# guarda os usuários usando o email como chave 
 _users_by_email: Dict[str, Dict[str, str]] = {}
 
-
+# ajusta o formato do email
 def _normalize_email(email: str) -> str:
     return email.strip().lower()
 
-
+# gera um hash usando hmac para evitar salvar a senha em claro
 def _hash_password(password: str, salt: Optional[str] = None) -> tuple[str, str]:
     salt = salt or os.urandom(16).hex()
     password_hash = hashlib.pbkdf2_hmac(
@@ -24,6 +24,13 @@ def _hash_password(password: str, salt: Optional[str] = None) -> tuple[str, str]
     return salt, password_hash
 
 
+'''
+cria um novo usuário:
+- verifica se o email já existe
+- gera um salt e hash para a senha
+- armazena o usuário no dicionário
+- salva nome, email, id e data de criação
+'''
 def create_user(name: str, email: str, password: str) -> Dict[str, str]:
     normalized_email = _normalize_email(email)
     if normalized_email in _users_by_email:
@@ -41,7 +48,13 @@ def create_user(name: str, email: str, password: str) -> Dict[str, str]:
     _users_by_email[normalized_email] = user
     return get_public_user(normalized_email)
 
-
+'''
+Autenticação do usuário:
+- busca o email;
+- se o email existir, gera o hash da senha fornecida usando o salt armazenado;
+- compara o hash gerado com o hash armazenado usando hmac.compare_digest para evitar ataques de timing;
+- se a autenticação for bem-sucedida, retorna os dados públicos do usuário.
+'''
 def authenticate_user(email: str, password: str) -> Optional[Dict[str, str]]:
     user = _users_by_email.get(_normalize_email(email))
     if not user:
@@ -53,7 +66,7 @@ def authenticate_user(email: str, password: str) -> Optional[Dict[str, str]]:
 
     return get_public_user(email)
 
-
+# retorna apenas os campos públicos do usuário
 def get_public_user(email: str) -> Optional[Dict[str, str]]:
     user = _users_by_email.get(_normalize_email(email))
     if not user:
