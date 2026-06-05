@@ -32,7 +32,7 @@ async def listar_usuarios(
     skip: int = 0,
     limit: int = 50,
 ):
-    return await user.List(session,skip=skip, limit=limit)
+    return await user.list(session,skip=skip, limit=limit)
 
 
 async def get_usuario(

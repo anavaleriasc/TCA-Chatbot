@@ -17,7 +17,7 @@ class UserUpdate(BaseModel):
 class UserPublic(BaseModel):
     id:int
     email:str
-    data_cadastro:datetime
+   
   
 
     class Config:
