@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Multiusuário | Inteligência Artificial</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 85vh;
+            background: #1e293b;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        #chat-header {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        #chat-history {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
+        }
+
+        #chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-history::-webkit-scrollbar-thumb {
+            background-color: #475569;
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease-in-out;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: #3b82f6;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: #334155;
+            color: #f8fafc;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .bot-message.loading {
+            background: transparent;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        #input-area {
+            display: flex;
+            padding: 15px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+            gap: 10px;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 30px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #message-input:focus {
+            border-color: #3b82f6;
+        }
+
+        #send-btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .send-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <div>
+                <span class="status-dot"></span> Gemini AI Bot
+            </div>
+            <div style="font-size: 0.75rem; color: #cbd5e1;" id="session-display">Sessão: Iniciando...</div>
+        </div>
+        
+        <div id="chat-history">
+            <div class="message bot-message">Olá! Eu sou o assistente de inteligência artificial construído com Gemini. Como posso ajudar você hoje?</div>
+        </div>
+        
+        <div id="input-area">
+            <input type="text" id="message-input" placeholder="Digite sua mensagem..." autocomplete="off">
+            <button id="send-btn" onclick="sendMessage()">
+                <svg class="send-icon" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const messageInput = document.getElementById('message-input');
+        const sessionDisplay = document.getElementById('session-display');
+        
+        // RECUPERAÇÃO DO SESSION ID: Garantindo persistência durante a mesma aba do navegador
+        let sessionId = sessionStorage.getItem("chatbot_session_id");
+
+        if(sessionId) {
+            sessionDisplay.innerText = "Sessão: " + sessionId.substring(0,8) + "...";
+        }
+
+        // Permite o envio também pressionando a tecla Enter no input
+        messageInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            // Insere a mensagem visualmente e limpa o input
+            appendMessage(text, 'user-message');
+            messageInput.value = '';
+
+            // Adiciona um feedback de carregamento (Loading)
+            const loadingId = "loading-" + Date.now();
+            appendMessage("Digitando...", 'bot-message loading', loadingId);
+
+            try {
+                // COMUNICAÇÃO FETCH ASSÍNCRONA com a API backend FastAPI
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        session_id: sessionId, // Opcional na primeira vez, o servidor gera se faltar
+                        message: text 
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Se um NOVO session_id for retornado pelo backend (ou seja, se a sessão acabou de ser criada)
+                // O front salva isso no Session Storage (Memória da Aba do Navegador)
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                    sessionStorage.setItem("chatbot_session_id", sessionId);
+                    sessionDisplay.innerText = "Sessão: " + sessionId.substring(0,8) + "...";
+                }
+
+                // Remove o balãozinho de "Digitando..." e coloca a resposta final
+                document.getElementById(loadingId).remove();
+                appendMessage(data.response, 'bot-message');
+                
+            } catch (error) {
+                console.error("Erro no Fetch:", error);
+                document.getElementById(loadingId).remove();
+                appendMessage("Erro: Falha na comunicação com o servidor.", 'bot-message');
+            }
+        }
+
+        function appendMessage(text, className, id = null) {
+            const div = document.createElement('div');
+            div.className = 'message ' + className;
+            if (id) div.id = id;
+            div.innerText = text;
+            chatHistory.appendChild(div);
+            // Rolagem automática da barra para baixo a cada mensagem nova
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    </script>
+</body>
+</html>
