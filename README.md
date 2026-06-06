@@ -1,8 +1,8 @@
-# Chatbot Multiusuário com Gemini AI 🤖
+# Chatbot Multiusuário com Gemini AI 
 
 Repositório destinado ao protótipo do chatbot desenvolvido para a disciplina **Tópicos em Computação Aplicada**.
 
-## 📌 Sobre o Projeto
+## Sobre o Projeto
 
 O projeto consiste em uma aplicação web multiusuário onde os usuários podem interagir com um modelo LLM (Large Language Model), utilizando o **Google Gemini 2.5 Flash** como motor de inteligência artificial.
 
@@ -10,7 +10,7 @@ A aplicação foi projetada para gerenciar sessões independentes de conversa, g
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 ### Backend
 
@@ -39,7 +39,7 @@ A aplicação foi projetada para gerenciar sessões independentes de conversa, g
 
 ---
 
-## 🏗️ Arquitetura do Sistema
+## Arquitetura do Sistema
 
 ### Backend
 

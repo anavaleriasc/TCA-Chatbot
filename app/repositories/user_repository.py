@@ -13,20 +13,51 @@ from typing import Dict, Optional
 
 
 class UserRepository:
-    def get_hash_password(self,password: str, salt: Optional[str] = None) -> str:
-        salt = salt or os.urandom(16).hex()
+    def create_password_hash(
+        self,
+        password: str,
+    ) -> tuple[str, str]:
+
+        salt = os.urandom(16).hex()
+
         password_hash = hashlib.pbkdf2_hmac(
             "sha256",
             password.encode("utf-8"),
             bytes.fromhex(salt),
             100_000,
         ).hex()
-        return password_hash
 
+        return salt, password_hash
+
+    def verify_password(
+        self,
+        password: str,
+        salt: str,
+        stored_hash: str,
+    ) -> bool:
+
+        password_hash = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            bytes.fromhex(salt),
+            100_000,
+        ).hex()
+
+        return hmac.compare_digest(
+            password_hash,
+            stored_hash,
+        )
 
     async def create(self,session:AsyncSession, *, email:str, password:str )->User:
-        hash_password = self.get_hash_password(password)
-        user = User(email=email, hashed_password=hash_password)
+        salt, hash_password = self.create_password_hash(
+            password
+        )
+
+        user = User(
+            email=email,
+            hashed_password=hash_password,
+            password_salt=salt,
+        )
         session.add(user)
         await session.commit()
         await session.refresh(user)
@@ -42,7 +73,12 @@ class UserRepository:
         if email is not None:
             user.email = email
         if password is not None:
-            user.password = password
+            salt, hash_password = self.create_password_hash(
+                password
+            )
+
+            user.hashed_password = hash_password
+            user.password_salt = salt
     
         await session.commit()
         await session.refresh(user)
