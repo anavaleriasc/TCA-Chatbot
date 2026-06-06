@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link"; // Importação adicionada para navegação interna
 import { login } from "@/services/auth";
 
 export default function LoginPage() {
@@ -77,6 +78,14 @@ export default function LoginPage() {
             >
               Entrar
             </button>
+
+            {/* Elemento adicionado abaixo do botão */}
+            <p className="auth-footer-text" style={{ marginTop: "15px", fontSize: "14px", textAlign: "center" }}>
+              Não possui conta?{" "}
+              <Link href="/register" style={{ color: "#0070f3", textDecoration: "underline", fontWeight: "500" }}>
+                Criar conta
+              </Link>
+            </p>
 
           </div>
         </div>

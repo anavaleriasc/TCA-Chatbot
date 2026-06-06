@@ -1,8 +1,8 @@
-"""criação de tabelas
+"""Regenerando o bd
 
-Revision ID: f8bb92070270
+Revision ID: 811c914ab2b4
 Revises: 
-Create Date: 2026-06-03 11:13:15.477527
+Create Date: 2026-06-06 15:14:08.249595
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f8bb92070270'
+revision: str = '811c914ab2b4'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -44,11 +44,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_sessions_user_id'), 'sessions', ['user_id'], unique=False)
     op.create_table('chat_messages',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('thread_id', sa.Integer(), nullable=False),
+    sa.Column('thread_id', sa.String(length=36), nullable=False),
     sa.Column('role', sa.String(length=32), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['thread_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['thread_id'], ['sessions.thread_id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_chat_messages_id'), 'chat_messages', ['id'], unique=False)
