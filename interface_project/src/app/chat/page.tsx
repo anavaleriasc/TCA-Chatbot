@@ -11,9 +11,9 @@ export default function ChatPage() {
       <section className="chat-container">
 
         <header className="chat-header">
-          <h1 className="chat-title">
-            OPALA
-          </h1>
+        <div className="logo">
+          <img src="/opala.png"/>
+        </div>
         </header>
 
         <ChatWindow />
