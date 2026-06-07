@@ -21,12 +21,13 @@ class UserRepository:
             bytes.fromhex(salt),
             100_000,
         ).hex()
-        return password_hash
+        return f"{salt}:{password_hash}"
 
 
     async def create(self,session:AsyncSession, *, email:str, password:str )->User:
+        normalized_email = email.strip().lower()
         hash_password = self.get_hash_password(password)
-        user = User(email=email, hashed_password=hash_password)
+        user = User(email=normalized_email, hashed_password=hash_password)
         session.add(user)
         await session.commit()
         await session.refresh(user)
@@ -58,7 +59,8 @@ class UserRepository:
         return await session.get(User, user_id)
         
     async def get_by_email(self,session:AsyncSession, email:str)->Optional[User]:
-        query = select(User).where(User.email == email)
+        normalized_email = email.strip().lower()
+        query = select(User).where(User.email == normalized_email)
         result = await session.execute(query)
         return result.scalar_one_or_none()
 

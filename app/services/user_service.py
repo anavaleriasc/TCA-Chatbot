@@ -16,6 +16,8 @@ async def adicionar_usuario(
     payload: UserCreate,
 ):
     existing_user = await user.get_by_email(session, payload.email)
+    #print(existing_user.email)
+    
 
     if existing_user:
         raise HTTPException(
@@ -39,14 +41,14 @@ async def get_usuario(
     session: AsyncSession,
     usuario_id: int,
 ):
-    user =  user.get(session, usuario_id)
-    if not user:
+    found_user = await user.get(session, usuario_id)
+    if not found_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Usuário não encontrado"
         )
 
-    return user
+    return found_user
 
 
 async def atualizar_usuario(

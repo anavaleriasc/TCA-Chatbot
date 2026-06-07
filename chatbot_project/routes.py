@@ -25,35 +25,7 @@ if not JWT_SECRET_KEY:
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = 60
 
-# Schema (Modelo) que define a estrutura do JSON recebido do frontend
-class ChatRequest(BaseModel):
-    session_id: Optional[str] = None
-    message: str
 
-# Schema que define a estrutura do JSON enviado de volta ao frontend
-class ChatResponse(BaseModel):
-    session_id: str
-    response: str
-
-class RegisterRequest(BaseModel):
-    name: str
-    email: str
-    password: str
-
-class LoginRequest(BaseModel):
-    email: str
-    password: str
-
-class UserResponse(BaseModel):
-    id: str
-    name: str
-    email: str
-
-class AuthResponse(BaseModel):
-    message: str
-    access_token: str
-    token_type: str
-    user: UserResponse
 
 def _create_access_token(user: dict) -> str:
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=JWT_EXPIRE_MINUTES)
@@ -100,41 +72,7 @@ def _validate_registration(request: RegisterRequest):
     if len(request.password) < 6:
         raise HTTPException(status_code=400, detail="A senha deve ter pelo menos 6 caracteres.")
 
-@router.post("/register", response_model=AuthResponse, status_code=201)
-async def register_endpoint(request: RegisterRequest):
-    _validate_registration(request)
 
-    try:
-        user = create_user(request.name, request.email, request.password)
-    except ValueError as error:
-        raise HTTPException(status_code=409, detail=str(error)) from error
-
-    access_token = _create_access_token(user)
-    return AuthResponse(
-        message="Cadastro criado com sucesso.",
-        access_token=access_token,
-        token_type="bearer",
-        user=UserResponse(id=user["id"], name=user["name"], email=user["email"]),
-    )
-
-@router.post("/login", response_model=AuthResponse)
-async def login_endpoint(request: LoginRequest):
-    _validate_email(request.email)
-
-    if not request.password:
-        raise HTTPException(status_code=400, detail="Informe sua senha.")
-
-    user = authenticate_user(request.email, request.password)
-    if not user:
-        raise HTTPException(status_code=401, detail="E-mail ou senha incorretos.")
-
-    access_token = _create_access_token(user)
-    return AuthResponse(
-        message="Login realizado com sucesso.",
-        access_token=access_token,
-        token_type="bearer",
-        user=UserResponse(id=user["id"], name=user["name"], email=user["email"]),
-    )
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest, current_user: dict = Depends(get_current_user)):

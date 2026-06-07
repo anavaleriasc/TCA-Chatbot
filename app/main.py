@@ -1,3 +1,13 @@
+import sys
+import os
+from pathlib import Path
+
+# Adiciona a raiz do projeto (o diretório pai da pasta 'app') ao sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+# Agora suas importações funcionarão tanto via 'api.router' quanto 'app.api.router'
+from api.router import api_router
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import os

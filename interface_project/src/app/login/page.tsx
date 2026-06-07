@@ -10,15 +10,25 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleLogin() {
-    const success = login(email, password);
+  // function handleLogin() {
+  //   const success = login(email, password);
 
-    if (success) {
+  //   if (success) {
+  //     router.push("/chat");
+  //   } else {
+  //     alert("Credenciais inválidas");
+  //   }
+  // }
+
+  async function handleLogin() {
+    const result = await login(email, password); // await é obrigatório aqui!
+
+    if (result.success) {
       router.push("/chat");
     } else {
-      alert("Credenciais inválidas");
+      alert("Erro: " + result.error);
     }
-  }
+}
 
   return (
     <main className="landing-page">

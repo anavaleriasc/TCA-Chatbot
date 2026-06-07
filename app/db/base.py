@@ -1,9 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase
-
+import sys
+import os
 
 class Base(DeclarativeBase):
-    """Base declarative class for SQLAlchemy models."""
-
-
-# Import models here so Alembic has access to metadata.
-import models
+    pass
