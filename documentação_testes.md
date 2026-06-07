@@ -69,7 +69,7 @@ Testa as rotas de recuperação de mensagens (`MessagePublic`).
 
 ## Como Rodar os Testes
 
-Para garantir que a aplicação segue íntegra após futuras alterações no código, basta executar o seguinte comando a partir da **raiz do projeto** (`TCA-Chatbot-ana-task008`):
+Para garantir que a aplicação segue íntegra após futuras alterações no código, basta executar o seguinte comando a partir da **raiz do projeto** (`TCA-Chatbot`):
 
 ```bash
 pytest app/tests
