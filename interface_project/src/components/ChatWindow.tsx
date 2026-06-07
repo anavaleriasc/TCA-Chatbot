@@ -1,22 +1,22 @@
-import { mockSessions } from "@/data/mock";
+"use client";
+
 import MessageBubble from "./MessageBubble";
+import { MessageType } from "@/app/chat/page"; // Ajuste o caminho se a sua ChatPage estiver em outra pasta
 
-export default function ChatWindow() {
+interface Props {
+  messages: MessageType[];
+}
 
-  const session = mockSessions[0];
-
+export default function ChatWindow({ messages }: Props) {
   return (
     <div className="chat-window">
-
-      {session.messages.map((message) => (
+      {messages.map((message) => (
         <MessageBubble
           key={message.id}
           sender={message.sender}
           text={message.text}
         />
       ))}
-
     </div>
   );
-  
 }

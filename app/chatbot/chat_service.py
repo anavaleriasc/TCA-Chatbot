@@ -57,14 +57,14 @@ async def send_message(
             db=session,
             user_id=payload.user_id,
             thread_id=payload.thread_id,
-            conversation_summary="",
+            conversation_summary=payload.message,
             messages=[],
         )
 
     # Salva a mensagem do usuário
     await chatMessages.create(
         db=session,
-        session_id=session_data.id,
+        session_id=payload.thread_id,
         role="user",
         content=payload.message,
     )
@@ -89,7 +89,7 @@ async def send_message(
 
     await chatMessages.create(
         db=session,
-        session_id=session_data.id,
+        session_id=payload.thread_id,
         role="bot",
         content=chatbot_response,
     )

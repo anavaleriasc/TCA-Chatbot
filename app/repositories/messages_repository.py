@@ -42,16 +42,12 @@ class MessagesRepository:
         result = await db.execute(query)
         return result.scalars().all()
 
-    async def list_by_thread(self,db:AsyncSession, thread_id:str)->Iterable[ChatMessage]:
-        session_query = select(ChatSession).where(ChatSession.thread_id == thread_id)
-        session_result = await db.execute(session_query)
-        session = session_result.scalars().all()
-        
-        if not session:
-            return []
-        
-        query = select(ChatMessage).where(ChatMessage.thread_id == session.thread_id)
+    async def list_by_thread(self, db: AsyncSession, thread_id: str) -> Iterable[ChatMessage]:
+        # Busca diretamente as mensagens onde o thread_id seja igual ao passado
+        query = select(ChatMessage).where(ChatMessage.thread_id == thread_id)
         result = await db.execute(query)
+        
+        # Retorna a lista de mensagens (se não tiver nenhuma, ele já retorna vazio automaticamente)
         return result.scalars().all()
 
 

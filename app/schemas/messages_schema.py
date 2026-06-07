@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class MessagePublic(BaseModel):
+    id: Optional[int] = None
     thread_id: Optional[str] = None
     role:Optional[str] = None
     created_at:Optional[datetime] = None
@@ -11,6 +12,3 @@ class MessagePublic(BaseModel):
 
     class Config:
         from_attributes=True
-
-
-

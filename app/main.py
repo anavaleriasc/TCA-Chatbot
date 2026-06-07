@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import os
+from fastapi.middleware.cors import CORSMiddleware
 from api.router import api_router
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,10 +22,10 @@ app = FastAPI(title="Chatbot Multiusuário com Gemini")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"], # Adicione aqui os endereços do seu frontend
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
-    allow_methods=["*"], # Permite GET, POST, PUT, DELETE, etc.
-    allow_headers=["*"], # Permite todos os cabeçalhos (necessário para o Token)
+    allow_methods=["*"], # Isso permite o OPTIONS, POST, GET, etc.
+    allow_headers=["*"],
 )
 
 # Registra os roteadores definidos no arquivo routes.py
