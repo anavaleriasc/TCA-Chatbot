@@ -14,7 +14,7 @@ async def test_list_sessions(mock_listar_sessoes, async_client: AsyncClient):
         SessionPublic(thread_id="thread-2", conversation_summary="Summary 2")
     ]
 
-    response = await async_client.get("/seções")
+    response = await async_client.get("/sessoes")
     
     assert response.status_code == 200
     data = response.json()
@@ -28,7 +28,7 @@ async def test_get_sessions_by_thread(mock_get_sessao_by_thread, async_client: A
     # Setup mock
     mock_get_sessao_by_thread.return_value = SessionPublic(thread_id="thread-1", conversation_summary="Summary 1")
 
-    response = await async_client.get("/seções/thread-1")
+    response = await async_client.get("/sessoes/thread-1")
     
     assert response.status_code == 200
     data = response.json()

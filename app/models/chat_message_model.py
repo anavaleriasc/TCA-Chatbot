@@ -11,7 +11,7 @@ class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    thread_id: Mapped[str] = mapped_column(ForeignKey("sessions.thread_id"), index=True, nullable=False)
+    thread_id: Mapped[str] = mapped_column(ForeignKey("sessions.thread_id", ondelete="CASCADE"), index=True, nullable=False)
     role: Mapped[str] = mapped_column(String(32), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(

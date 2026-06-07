@@ -22,13 +22,50 @@ async def get_sessao_by_thread(
     db: AsyncSession,
     thread_id: str,
 ):
-    return await chatSession.get_by_thread(db, thread_id)
-    
+    session = await chatSession.get_by_thread(db, thread_id)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Sessão com thread_id '{thread_id}' não encontrada"
+        )
+    return session
+
+async def update_sessao(
+    db: AsyncSession,
+    session_id: int,
+    thread_id: str = None,
+    user_id: str = None,
+    conversation_summary: str = None,
+    messages: list = None
+):
+    session = await chatSession.get(db, session_id)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Sessão não encontrada"
+        )
+    return await chatSession.update(
+        db,
+        session,
+        thread_id=thread_id,
+        user_id=user_id,
+        conversation_summary=conversation_summary,
+        messages=messages
+    )
+
+async def remover_sessao(
+    db: AsyncSession,
+    session_id: int,
+):
+    session = await chatSession.get(db, session_id)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Sessão não encontrada"
+        )
 
 
-
-   
-
+    return await chatSession.delete(db, session)
 
 
 

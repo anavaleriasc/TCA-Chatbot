@@ -32,7 +32,7 @@ export default function ChatPage() {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch("http://localhost:8000/seções");
+      const res = await fetch("http://localhost:8000/sessoes");
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
@@ -82,7 +82,7 @@ export default function ChatPage() {
 
     // 2. Manda para o backend atualizar no banco de dados
     try {
-      await fetch(`http://localhost:8000/seções/${threadId}`, {
+      await fetch(`http://localhost:8000/sessoes/${threadId}`, {
         method: "PATCH", // Ou PUT, dependendo de como o backend estiver configurado
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_summary: newName })
@@ -104,7 +104,7 @@ export default function ChatPage() {
 
     // 3. Pede para o backend deletar do banco
     try {
-      await fetch(`http://localhost:8000/seções/${threadId}`, {
+      await fetch(`http://localhost:8000/sessoes/${threadId}`, {
         method: "DELETE",
       });
     } catch (error) {
