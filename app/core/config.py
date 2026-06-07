@@ -4,12 +4,12 @@ from pathlib import Path
 from dotenv import find_dotenv
 from pydantic import Field, SecretStr, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from enum import StrEnum
+from enum import Enum
 
 # Define a raiz do projeto (subindo 2 níveis a partir de app/core/)
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-class DatabaseType(StrEnum):
+class DatabaseType(str, Enum):
     SQLITE = "sqlite"
     POSTGRES = "postgres"
     MONGO = "mongo"
