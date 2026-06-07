@@ -23,7 +23,7 @@ export default function LoginPage() {
   async function handleLogin() {
     const result = await login(email, password); // await é obrigatório aqui!
 
-    if (result.success) {
+    if (result.access_token) {
       router.push("/chat");
     } else {
       alert("Erro: " + result.error);

@@ -622,6 +622,7 @@ body {
   font-family: var(--font);
   font-size: 0.95rem;
   transition: border-color var(--transition);
+  margin-bottom: 6px;
 }
 
 .auth-input:focus {
