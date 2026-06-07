@@ -4,6 +4,14 @@ import hashlib
 from datetime import datetime, timedelta, timezone
 
 import jwt
+from app.core.config import get_settings  # Importa a instância centralizada
+
+# Carrega as configurações centralizadas
+settings = get_settings()
+
+# Usa a chave diretamente do objeto settings
+JWT_SECRET_KEY = settings.secret_key 
+
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -13,15 +21,16 @@ from session_manager import create_session, get_history, add_message
 from llm_service import generate_chat_response
 from repositories.user_repository import user
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import get_settings
+
+settings = get_settings()
+# use settings.async_database_url ou settings.secret_key
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
 bearer_scheme = HTTPBearer()
-
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-
 
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = 60
