@@ -1,3 +1,13 @@
+import sys
+import os
+from pathlib import Path
+
+# Adiciona a raiz do projeto (o diretório pai da pasta 'app') ao sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+# Agora suas importações funcionarão tanto via 'api.router' quanto 'app.api.router'
+from api.router import api_router
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import os
@@ -8,6 +18,14 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 # Inicializa o FastAPI
 app = FastAPI(title="Chatbot Multiusuário com Gemini")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"], # Adicione aqui os endereços do seu frontend
+    allow_credentials=True,
+    allow_methods=["*"], # Permite GET, POST, PUT, DELETE, etc.
+    allow_headers=["*"], # Permite todos os cabeçalhos (necessário para o Token)
+)
 
 # Registra os roteadores definidos no arquivo routes.py
 #app.include_router(router)
