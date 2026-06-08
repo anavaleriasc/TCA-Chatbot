@@ -33,10 +33,17 @@ export default function ChatPage() {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch("http://52.67.190.156:8000/sessoes");
+      const token = localStorage.getItem("access_token");
+      const res = await fetch("http://52.67.190.156:8000/sessoes", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
+      } else if (res.status === 401) {
+        console.error("Token expirado ou inválido");
       }
     } catch (error) {
       console.error("Erro ao buscar sessões", error);
@@ -45,7 +52,12 @@ export default function ChatPage() {
 
   const fetchMessages = async (threadId: string) => {
     try {
-      const res = await fetch(`http://52.67.190.156:8000/mensagens/${threadId}`);
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`http://52.67.190.156:8000/mensagens/${threadId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         const formattedMessages: MessageType[] = data.map((msg: any, index: number) => ({
@@ -54,6 +66,8 @@ export default function ChatPage() {
           sender: msg.role === "user" ? "user" : "bot"
         }));
         setMessages(formattedMessages);
+      } else if (res.status === 403) {
+        console.error("Você não tem permissão para acessar este chat");
       }
     } catch (error) {
       console.error("Erro ao buscar histórico", error);
@@ -83,9 +97,13 @@ export default function ChatPage() {
 
     // 2. Manda para o backend atualizar no banco de dados
     try {
+      const token = localStorage.getItem("access_token");
       await fetch(`http://52.67.190.156:8000/sessoes/${threadId}`, {
-        method: "PATCH", // Ou PUT, dependendo de como o backend estiver configurado
-        headers: { "Content-Type": "application/json" },
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ conversation_summary: newName })
       });
     } catch (error) {
@@ -105,8 +123,12 @@ export default function ChatPage() {
 
     // 3. Pede para o backend deletar do banco
     try {
+      const token = localStorage.getItem("access_token");
       await fetch(`http://52.67.190.156:8000/sessoes/${threadId}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
     } catch (error) {
       console.error("Erro ao excluir a sessão no backend", error);
@@ -123,9 +145,13 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem("access_token");
       const response = await fetch("http://52.67.190.156:8000/chat/invoke", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           user_id: currentUserId,
           thread_id: activeThreadId,
@@ -145,6 +171,10 @@ export default function ChatPage() {
         if (isFirstMessage) {
           fetchSessions();
         }
+      } else if (response.status === 401) {
+        console.error("Token expirado. Por favor, faça login novamente.");
+      } else if (response.status === 403) {
+        console.error("Você não tem permissão para enviar mensagens como este usuário.");
       } else {
         console.error("Erro na API ao processar a mensagem.");
       }
