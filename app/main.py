@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 # Inicializa o FastAPI
-app = FastAPI(title="Chatbot Multiusuário com Gemini")
+app = FastAPI(title="Chatbot Multiusuário")
 
 app.add_middleware(
     CORSMiddleware,
