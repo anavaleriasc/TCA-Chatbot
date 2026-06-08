@@ -106,8 +106,16 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+### 4. Banco de Dados
 
-### 4. Configurar Variáveis de Ambiente
+```
+docker compose -f app/docker/
+docker-compose.yml up db-d
+alembic upgrade head
+```
+
+
+### 5. Configurar Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do backend:
 
@@ -115,7 +123,7 @@ Crie um arquivo `.env` na raiz do backend:
 GOOGLE_API_KEY=sua_chave_aqui
 ```
 
-### 5. Executar o Backend
+### 6. Executar o Backend
 
 ```bash
 uvicorn main:app --reload
@@ -131,13 +139,13 @@ http://127.0.0.1:8000
 
 ## Frontend
 
-### 6. Instalar Dependências
+### 7. Instalar Dependências
 
 ```bash
 npm install
 ```
 
-### 7. Executar o Frontend
+### 8. Executar o Frontend
 
 ```bash
 npm run dev
