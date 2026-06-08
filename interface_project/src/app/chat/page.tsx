@@ -32,7 +32,7 @@ export default function ChatPage() {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch("http://localhost:8000/sessoes");
+      const res = await fetch("http://52.67.190.156:8000/sessoes");
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
@@ -44,7 +44,7 @@ export default function ChatPage() {
 
   const fetchMessages = async (threadId: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/mensagens/${threadId}`);
+      const res = await fetch(`http://52.67.190.156:8000/mensagens/${threadId}`);
       if (res.ok) {
         const data = await res.json();
         const formattedMessages: MessageType[] = data.map((msg: any, index: number) => ({
@@ -82,7 +82,7 @@ export default function ChatPage() {
 
     // 2. Manda para o backend atualizar no banco de dados
     try {
-      await fetch(`http://localhost:8000/sessoes/${threadId}`, {
+      await fetch(`http://52.67.190.156:8000/sessoes/${threadId}`, {
         method: "PATCH", // Ou PUT, dependendo de como o backend estiver configurado
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_summary: newName })
@@ -104,7 +104,7 @@ export default function ChatPage() {
 
     // 3. Pede para o backend deletar do banco
     try {
-      await fetch(`http://localhost:8000/sessoes/${threadId}`, {
+      await fetch(`http://52.67.190.156:8000/sessoes/${threadId}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -122,7 +122,7 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/chat/invoke", {
+      const response = await fetch("http://52.67.190.156:8000/chat/invoke", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -22,7 +22,7 @@ export default function RegisterPage() {
 
     try {
       // Fazendo a requisição real para a rota criada no user_router.py
-      const response = await fetch("http://localhost:8000/usuarios", {
+      const response = await fetch("http://52.67.190.156:8000/usuarios", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
