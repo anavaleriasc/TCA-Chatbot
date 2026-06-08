@@ -1,149 +1,193 @@
-# Chatbot Multiusuário com Gemini AI 🤖
+# Chatbot Multiusuário com LLM
 
-Repositório destinado ao protótipo do chatbot desenvolvido para a disciplina **Tópicos em Computação Aplicada**.
+Projeto desenvolvido para a disciplina de Tópicos em Computação Aplicada.
 
-## 📌 Sobre o Projeto
+## Visão Geral
 
-O projeto consiste em uma aplicação web multiusuário onde os usuários podem interagir com um modelo LLM (Large Language Model), utilizando o **Google Gemini 2.5 Flash** como motor de inteligência artificial.
+O sistema consiste em uma aplicação web multiusuário que permite a interação com um modelo de linguagem (LLM) por meio de uma interface de chat.
 
-A aplicação foi projetada para gerenciar sessões independentes de conversa, garantindo o isolamento do histórico entre diferentes usuários. O sistema é composto por um backend responsável pela comunicação com a API do Gemini e um frontend moderno desenvolvido em Next.js.
+A solução foi projetada para suportar autenticação de usuários, gerenciamento de sessões de conversa e persistência do histórico de mensagens. A arquitetura é composta por um frontend desenvolvido em Next.js e um backend desenvolvido em FastAPI, responsável pela integração com o modelo de linguagem e pelo acesso ao banco de dados.
 
----
+## Tecnologias Utilizadas
 
-## 🚀 Tecnologias Utilizadas
+### Frontend
+
+* Next.js
+* React
+* TypeScript
+* CSS
 
 ### Backend
 
-* Python 3
+* Python
 * FastAPI
-* Uvicorn
+* SQLAlchemy
+* Alembic
 * Pydantic
-* Python Dotenv
 
 ### Inteligência Artificial
 
-* Google Gemini 2.5 Flash
-* SDK oficial `google-genai`
+* LangChain
+* Google Gemini
 
-### Frontend
+### Banco de Dados
 
-* Next.js 15
-* React 19
-* TypeScript
-* CSS Modules
-* Fetch API para comunicação com o backend
+* PostgreSQL
 
 ### Infraestrutura
 
-* AWS EC2 (implantação planejada)
+* Docker
+* Docker Compose
+* AWS
 
 ---
 
-## 🏗️ Arquitetura do Sistema
+## Fluxo de Uso
+
+1. O usuário acessa a aplicação web.
+2. O usuário realiza autenticação no sistema.
+3. O frontend envia requisições HTTP para a API.
+4. A API valida o usuário e a sessão ativa.
+5. A mensagem enviada é encaminhada para a camada de negócios.
+6. O LangChain processa a solicitação e consulta o modelo Gemini.
+7. A resposta gerada é retornada para a API.
+8. O histórico da conversa é persistido no PostgreSQL.
+9. A resposta é enviada ao frontend em formato JSON.
+10. O usuário visualiza a resposta na interface do chat.
+
+---
+
+## Estrutura do Projeto
 
 ### Backend
 
-A aplicação backend segue o princípio de **Separation of Concerns (SoC)**, distribuindo responsabilidades entre módulos específicos:
-
-* `main.py` — Inicialização da aplicação FastAPI e configuração dos recursos.
-* `routes.py` — Definição dos endpoints REST da API.
-* `session_manager.py` — Gerenciamento de sessões e histórico de conversas por usuário.
-* `llm_service.py` — Integração com a API do Google Gemini.
-* `.env` — Armazenamento seguro das variáveis de ambiente.
+```text
+app/
+├── auth/
+├── chatbot/
+├── core/
+├── db/
+├── users/
+├── alembic/
+├── main.py
+└── requirements.txt
+```
 
 ### Frontend
 
-O frontend foi desenvolvido utilizando a arquitetura baseada em componentes do Next.js:
-
-* `src/app/` — Rotas e páginas da aplicação.
-* `src/components/` — Componentes reutilizáveis da interface.
-* `src/mocks/` — Dados simulados utilizados durante o desenvolvimento.
-* `src/styles/` — Estilos globais e específicos dos componentes.
-* `public/` — Arquivos estáticos da aplicação.
-
-Principais componentes:
-
-* **Sidebar** — Exibição das conversas do usuário.
-* **ChatWindow** — Área principal de exibição das mensagens.
-* **MessageBubble** — Renderização das mensagens do usuário e do assistente.
-* **MessageInput** — Campo de entrada e envio de mensagens.
-
----
-
-## ⚙️ Como Executar o Projeto
-
-### 1. Clonar o Repositório
-
-```bash
-git clone <URL_DO_REPOSITORIO>
-cd chatbot-project
+```text
+interface_project/
+├── src/
+│   ├── app/
+│   ├── components/
+│   ├── services/
+│   ├── data/
+│   └── context/
+├── public/
+└── package.json
 ```
 
 ---
 
-## Backend
+## Configuração do Ambiente
 
-### 2. Criar Ambiente Virtual
+### Pré-requisitos
 
-```bash
-python -m venv venv
-```
+* Python 3.12+
+* Node.js
+* Docker Desktop
+* Git
 
-Windows:
+É necessário que o Docker esteja em execução antes da inicialização do banco de dados.
+
+---
+
+## Instalação das Dependências
+
+Na raiz do projeto:
 
 ```bash
 venv\Scripts\activate
-```
-
-Linux/Mac:
-
-```bash
-source venv/bin/activate
-```
-
-### 3. Instalar Dependências
-
-```bash
 pip install -r requirements.txt
-```
-
-### 4. Configurar Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do backend:
-
-```env
-GOOGLE_API_KEY=sua_chave_aqui
-```
-
-### 5. Executar o Backend
-
-```bash
-uvicorn main:app --reload
-```
-
-O servidor ficará disponível em:
-
-```text
-http://127.0.0.1:8000
 ```
 
 ---
 
-## Frontend
+## Inicialização do Banco de Dados
 
-### 6. Instalar Dependências
+Executar:
 
 ```bash
-npm install
+docker compose -f app/docker/docker-compose.yml up db -d
 ```
 
-### 7. Executar o Frontend
+Caso ocorra algum problema com os volumes:
 
 ```bash
+docker compose -f app/docker/docker-compose.yml down -v
+
+docker compose -f app/docker/docker-compose.yml up -d
+
+alembic upgrade head
+```
+
+---
+
+## Variáveis de Ambiente
+
+O arquivo `.env` deve estar localizado na raiz do projeto.
+
+Exemplo:
+
+```env
+GOOGLE_API_KEY=...
+JWS_SECRET_KEY=...
+
+DB_HOST=db
+DB_NAME=tca_chatbot
+DB_USER=admin
+DB_PASSWORD=admin_tca
+```
+
+---
+
+## Execução do Backend
+
+Em um terminal:
+
+```bash
+cd app
+
+uvicorn main:app --reload
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:8000
+```
+
+Documentação automática:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Execução do Frontend
+
+Em outro terminal:
+
+```bash
+cd interface_project
+
+npm install
+
 npm run dev
 ```
 
-O frontend ficará disponível em:
+A aplicação ficará disponível em:
 
 ```text
 http://localhost:3000
@@ -151,32 +195,32 @@ http://localhost:3000
 
 ---
 
-## 🔄 Fluxo de Funcionamento
+## Fluxo de Comunicação
 
-1. O usuário envia uma mensagem pela interface web.
-2. O frontend realiza uma requisição HTTP para o backend.
-3. O backend identifica a sessão do usuário.
-4. O histórico da conversa é recuperado.
-5. A mensagem é enviada ao Google Gemini.
-6. A resposta gerada é retornada ao backend.
-7. O backend atualiza o histórico da sessão.
-8. A resposta é exibida ao usuário na interface.
+```text
+Usuário
+   │
+   ▼
+Next.js (Frontend)
+   │ HTTP/HTTPS + JSON
+   ▼
+FastAPI (API)
+   │
+   ▼
+LangChain
+   │
+   ▼
+Google Gemini
+   │
+   ▼
+PostgreSQL
+   │
+   ▼
+Resposta ao Usuário
+```
 
 ---
 
-## ☁️ Implantação na AWS
+## Equipe
 
-A entrega final prevê a implantação da aplicação em uma instância EC2 da AWS.
-
-A infraestrutura deverá conter:
-
-* Frontend Next.js em produção;
-* Backend FastAPI executando via Uvicorn/Gunicorn;
-* Configuração de variáveis de ambiente seguras;
-* Acesso público por endereço IP ou domínio.
-
----
-
-## 👥 Equipe
-
-Projeto desenvolvido para a disciplina **Tópicos em Computação Aplicada**.
+Projeto desenvolvido no âmbito da disciplina de Tópicos em Computação Aplicada.
