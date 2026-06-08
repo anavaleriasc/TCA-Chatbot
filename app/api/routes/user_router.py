@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.auth_service import validate_email, create_access_token
+from services.auth_service import validate_email, create_access_token, get_current_user
 
 from db.database import get_db
 from schemas.user_schema import UserCreate, UserPublic, UserUpdate, AuthResponse
@@ -44,8 +44,11 @@ async def list_users(
 @router.get("/{user_id}", response_model=UserPublic)
 async def get_user(
     user_id: int,
+    current_user = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> UserPublic:
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Você não tem permissão para acessar os dados de outro usuário.")
     user = await get_usuario(db, user_id)
     return user
 

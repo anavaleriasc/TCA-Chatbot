@@ -11,8 +11,9 @@ async def listar_mensagens(
     db: AsyncSession,
     skip: int = 0,
     limit: int = 50,
+    user_id: int = None,
 ):
-    return await chatMessages.list(db,skip=skip, limit=limit)
+    return await chatMessages.list(db, skip=skip, limit=limit, user_id=user_id)
 
 
 async def listar_mensagem_by_thread(

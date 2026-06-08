@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link"; // Importação adicionada para navegação interna
 import { login } from "@/services/auth";
+import { useAuth } from "@/app/hooks/useAuth"; 
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setAuth } = useAuth(); // Pegando a função setAuth do contexto
 
   // function handleLogin() {
   //   const success = login(email, password);
@@ -24,6 +26,7 @@ export default function LoginPage() {
     const result = await login(email, password); // await é obrigatório aqui!
 
     if (result.access_token) {
+      setAuth(result); // Armazenando os dados de autenticação no contexto
       router.push("/chat");
     } else {
       alert("Erro: " + result.error);

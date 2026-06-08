@@ -51,8 +51,10 @@ class MessagesRepository:
         return result.scalars().all()
 
 
-    async def list(self,db:AsyncSession, *,skip: int =0, limit: int = 50,) -> Iterable[ChatMessage]:
+    async def list(self,db:AsyncSession, *,skip: int =0, limit: int = 50, user_id: int = None) -> Iterable[ChatMessage]:
         query = select(ChatMessage)
+        if user_id is not None:
+            query = query.join(ChatSession).where(ChatSession.user_id == user_id)
         query = query.offset(skip).limit(limit)
         result = await db.execute(query)
         return result.scalars().all()

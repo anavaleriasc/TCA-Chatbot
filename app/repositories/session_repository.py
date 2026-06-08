@@ -45,8 +45,10 @@ class SessionRepository:
         return result.scalar_one_or_none()
 
 
-    async def list(self,db:AsyncSession, *,skip: int =0, limit: int = 50,) -> Iterable[ChatSession]:
+    async def list(self,db:AsyncSession, *,skip: int =0, limit: int = 50, user_id: int = None) -> Iterable[ChatSession]:
         query = select(ChatSession)
+        if user_id is not None:
+            query = query.where(ChatSession.user_id == user_id)
         query = query.offset(skip).limit(limit)
         result = await db.execute(query)
         return result.scalars().all()

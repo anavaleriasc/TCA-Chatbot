@@ -20,6 +20,7 @@ from typing import Optional
 from repositories.user_repository import user
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
+from db.database import get_db
 
 settings = get_settings()
 # use settings.async_database_url ou settings.secret_key
@@ -61,7 +62,7 @@ def create_access_token(user: dict) -> str:
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 
-def get_current_user(db: AsyncSession, credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme), db: AsyncSession = Depends(get_db)) -> dict:
     try:
         payload = jwt.decode(
             credentials.credentials,
@@ -74,14 +75,15 @@ def get_current_user(db: AsyncSession, credentials: HTTPAuthorizationCredentials
         raise HTTPException(status_code=401, detail="Token invalido.") from error
 
     email = payload.get("sub")
-    if not email:
+    user_id = payload.get("user_id")
+    if not email or not user_id:
         raise HTTPException(status_code=401, detail="Token invalido.")
 
-    user = user.get_by_email(db,email)
-    if not user:
+    user_obj = await user.get_by_email(db, email)
+    if not user_obj:
         raise HTTPException(status_code=401, detail="Usuario nao encontrado.")
 
-    return user
+    return user_obj
 
 def validate_email(email: str):
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email.strip()):

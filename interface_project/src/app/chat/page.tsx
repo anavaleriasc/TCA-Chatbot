@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
 import MessageInput from "@/components/MessageInput";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export interface MessageType {
   id: string;
@@ -23,7 +24,7 @@ export default function ChatPage() {
   const [activeThreadId, setActiveThreadId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const currentUserId = 1;
+  const currentUserId = useAuth()?.auth?.user.id; // Pegando o ID do usuário logado do contexto
 
   useEffect(() => {
     fetchSessions();

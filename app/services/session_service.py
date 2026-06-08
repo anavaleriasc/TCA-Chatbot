@@ -14,8 +14,9 @@ async def listar_sessoes(
     db: AsyncSession,
     skip: int = 0,
     limit: int = 50,
+    user_id: int = None,
 ):
-    return await chatSession.list(db,skip=skip, limit=limit)
+    return await chatSession.list(db, skip=skip, limit=limit, user_id=user_id)
 
 
 async def get_sessao_by_thread(
