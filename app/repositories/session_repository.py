@@ -51,6 +51,10 @@ class SessionRepository:
         result = await db.execute(query)
         return result.scalars().all()
 
+    async def delete(self,db:AsyncSession, session:ChatSession) -> None:
+        await db.delete(session)
+        await db.commit()
+
 
 chatSession = SessionRepository()
 

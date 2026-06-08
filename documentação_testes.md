@@ -56,9 +56,9 @@ Testa a rota de conversação do Chatbot via `POST /chat/invoke`.
 - **`test_invoke_chat`**: Envia o payload no formato `ChatRequest` (com `user_id`, `message` e `thread_id`) e verifica se a resposta em Mock contém os dados aguardados (`interaction_type`, `model`, etc).
 
 ### 4. `test_session_router.py` (2 Testes)
-Testa as rotas de histórico de seções do usuário.
-- **`test_list_sessions`**: Valida que uma coleção de `SessionPublic` simulada reflete corretamente um JSON listado em `GET /seções`.
-- **`test_get_sessions_by_thread`**: Checa o retorno de uma sessão específica baseada no UUID da Thread (`GET /seções/{thread_id}`).
+Testa as rotas de histórico de sessoes do usuário.
+- **`test_list_sessions`**: Valida que uma coleção de `SessionPublic` simulada reflete corretamente um JSON listado em `GET /sessoes`.
+- **`test_get_sessions_by_thread`**: Checa o retorno de uma sessão específica baseada no UUID da Thread (`GET /sessoes/{thread_id}`).
 
 ### 5. `test_messages_router.py` (2 Testes)
 Testa as rotas de recuperação de mensagens (`MessagePublic`).

@@ -16,7 +16,7 @@ from chatbot.agent import get_agent
 
 
 llm = get_agent()
-print(llm)
+
 
 prompt = ChatPromptTemplate.from_messages([
     SystemMessage(content=SYSTEM_PROMPT),

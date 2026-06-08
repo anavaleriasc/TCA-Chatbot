@@ -17,8 +17,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 from typing import Optional
-from session_manager import create_session, get_history, add_message
-from llm_service import generate_chat_response
 from repositories.user_repository import user
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
